@@ -2,7 +2,7 @@
 
 ## Update
 
-* Code for feature extraction (Python) coming soon!
+* Code for feature extraction (Python ROS node) has been released!
 * Code for DLIOM (C++) will be released separately.
 * Our paper is submitted for publication at the IEEE International Conference on Robotics and Automation (ICRA) 2025.
 
@@ -18,15 +18,22 @@ This repository contains the official implementation of the feature extractor ne
 
 ## Dependencies
 
-**Coming Soon**
-
-## Prerequisite
-
-**Coming Soon**
+* ROS2 Humble
+* Ubuntu 22.04
+* Core python packages and version can be found in `requirements.txt`.
+* Install `octree_handler`: ```cd submodules/octree_handler && pip3 install -U .```
 
 ## Running
 
-**Coming Soon**
+### Building
+Build the ROS package using `Colcon`:
+
+```
+colcon build --packages-select FeatureLIOM
+source install/setup.bash
+ros2 run FeatureLIOM extract
+```
+The node listens to the specified `pcd_topic`, and publishes keypoint **indices** on `downsampled_topic`. This implementation assumes the odometry code maintains the point ordering until the dense point cloud gets compressed.
 
 ## Generated Maps
 
