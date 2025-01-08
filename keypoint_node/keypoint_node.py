@@ -46,7 +46,7 @@ class KeypointNode(Node):
         pcd_topic="/dliom/odom_node/compress",
         downsampled_topic="/PointRec/descriptor_cloud",
         use_model=False,
-        cfg="src/SLAM_DPCC/config/bimodal_NCL_Pretrained_Match.yaml",
+        cfg="src/FeatureLIOM/config/bimodal_NCL_Pretrained_Match.yaml",
         mode="bimodal",
         lidar_range=50.0
     ):
@@ -80,7 +80,7 @@ class KeypointNode(Node):
 
         self.bimodal_config = y.load(open(cfg, 'r'))
 
-        ckpt_path = "./src/SLAM_DPCC/" + self.bimodal_config['ckpt_dir'] + '/' + self.bimodal_config['experiment_name'] + "_best.pth"
+        ckpt_path = "./src/FeatureLIOM/" + self.bimodal_config['ckpt_dir'] + '/' + self.bimodal_config['experiment_name'] + "_best.pth"
 
         self.bimodal_model = BimodalCompressor(self.bimodal_config)
 
@@ -292,7 +292,7 @@ def main(
     pcd_topic="/dliom/odom_node/compress",
     downsampled_topic="/PointRec/descriptor_cloud",
     use_model=True,
-    bimodal_cfg="src/SLAM_DPCC/config/bimodal_NCL_Pretrained_Match.yaml",
+    bimodal_cfg="src/FeatureLIOM/config/bimodal_NCL_Pretrained_Match.yaml",
     mode="bimodal",
     lidar_range=128.0
 ):
