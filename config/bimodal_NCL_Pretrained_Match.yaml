@@ -1,0 +1,57 @@
+experiment_name: "bimodal_NCL_Pretrained_Match"
+
+# ==========================
+#    Training arguments
+# ==========================
+
+# batch size is simulated using gradient accumulation
+batch_size  : 8
+epoch       : 400
+lr          : 0.001
+weight_decay: 0.0001
+dataset     : "attack"
+normalize   : False
+data_root   : "./random_attack/patch_adding_scored_cloud/Working_SemanticKITTI_no_ground"
+ckpt_dir    : "checkpoints"
+pretrained_backbone : "voxelize_downsample_no_cov_input_ncl_contrastive_transformfree_dataset"
+reg_weight  : 0.05
+v_res       : 0.25
+cov_loss    : False
+salient_margin : 0.5
+uniqueness_margin  : 0.5
+
+# ==========================
+#   lr scheduler arguments
+# ==========================
+
+scheduler       : "OneCycle"
+max_lr          : 0.001
+start_lr        : 0.00004
+end_lr          : 0.00000001
+pct_start       : 0.1
+anneal_strategy : "cos"
+
+# ==========================
+#    Network Architecture
+# ==========================
+model                     : "bimodal"
+input_feature_dim         : 1
+output_feature_dim        : 32
+use_position_embedding    : True
+max_corr_dist             : 0.2
+position_embedding_hidden_dim : 32
+position_embedding_dim    : 64
+postprocessing_hidden_dim : 128
+processed_feature_dim     : 256
+inv_score                 : False
+knn                       : 50
+n_c                       : 2000
+resolution                : 0.25
+kernel_radius             : 1.5
+num_kernel_points         : 27
+deformable                : True
+
+# ==========================
+#          Logging
+# ==========================
+logdir : 'log'
