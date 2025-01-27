@@ -2,9 +2,9 @@
 
 ## Update
 
+* Our paper has been accepted to IEEE ICRA 2025! Looking forward to meeting fellow researchers in Atlanta.
 * Code for feature extraction (Python ROS node) has been released!
 * Code for DLIOM (C++) will be released separately.
-* Our paper is submitted for publication at the IEEE International Conference on Robotics and Automation (ICRA) 2025.
 
 ## About
 
