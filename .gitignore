@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-#datasets
+#ignore datasets
 input_data/
 
 # C extensions
