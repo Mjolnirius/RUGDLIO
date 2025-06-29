@@ -101,6 +101,7 @@ class KeypointNode(Node):
     def pcd_callback(self, msg):
 
         start = time.time()
+        print("PointCloud empfangen. Nice!")
 
         point_cloud, rings = self.msg_to_torch_pcd(msg)
 
