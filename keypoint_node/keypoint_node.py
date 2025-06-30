@@ -114,8 +114,10 @@ class KeypointNode(Node):
 
         start = time.time()
         print("PointCloud empfangen. Nice!")
-
         point_cloud, rings = self.msg_to_torch_pcd(msg)
+
+        print("device point_cloud:", point_cloud.device)                        # CUDA check
+        print("device model:", next(self.bimodal_model.parameters()).device)    # CUDA check
 
         if self.use_model:
 
@@ -126,6 +128,10 @@ class KeypointNode(Node):
                 if self.mode == 'handcrafted':
 
                     smoothness = compute_smoothness(point_cloud, rings, k=10)
+                    print("device smoothness:", smoothness.device)              # CUDA check
+                    print("device point_cloud (before gridSampling):", point_cloud.device)  # CUDA check
+
+
 
                     # incoming scan is not voxelized
                     # to maintain fair comparison we compute rough number of points if we use 0.25 voxel filter
@@ -204,8 +210,13 @@ class KeypointNode(Node):
                     if len(coverage_indices) >= 0.01 * point_cloud.shape[0]:
                         direct_kp_indices = torch.cat([direct_kp_indices, coverage_indices])
 
-                mask = torch.ones(len(point_cloud), dtype=torch.bool)
+                #mask = torch.ones(len(point_cloud), dtype=torch.bool)      # CUDA usage
+                mask = torch.ones(len(point_cloud), dtype=torch.bool, device=point_cloud.device)
+
                 mask[direct_kp_indices] = False
+                print("device mask:", mask.device)                          # CUDA check
+                print("device point_cloud (masking):", point_cloud.device)  # CUDA check
+
                 to_be_compressed = point_cloud[mask]
                 # to_be_compressed_score = score[mask]
                 # _, once_indices = torch.topk(to_be_compressed_score, int(0.34*len(to_be_compressed_score)))
@@ -215,7 +226,9 @@ class KeypointNode(Node):
         else:
 
             # randomly select 20% points from the dense point cloud
-            all_indices = torch.arange(len(point_cloud)).cuda()
+            #all_indices = torch.arange(len(point_cloud)).cuda()        # CUDA usage
+            all_indices = torch.arange(len(point_cloud), device=point_cloud.device)
+
             direct_kp_indices = torch.randint(low=0, high=len(point_cloud), size=(int(0.2*len(point_cloud)),)).cuda()
 
             mask = torch.ones(len(point_cloud), dtype=torch.bool)
@@ -308,14 +321,22 @@ class KeypointNode(Node):
         msg = self.convert_to_pc2_msg(selected, frame_id='odom')
         self.pc_pub.publish(msg)
 
-    def publish_dropped_cloud(self, full_pc: torch.Tensor, keep_indices: torch.Tensor):
-        all_indices = torch.arange(full_pc.shape[0])
-        mask = torch.ones(full_pc.shape[0], dtype=torch.bool)
-        mask[keep_indices.cpu()] = False
+    #def publish_dropped_cloud(self, full_pc: torch.Tensor, keep_indices: torch.Tensor):
+    #    all_indices = torch.arange(full_pc.shape[0])
+    #    mask = torch.ones(full_pc.shape[0], dtype=torch.bool)
+    #    mask[keep_indices.cpu()] = False
+    #    dropped = full_pc[mask].cpu().numpy()
+    #    msg = self.convert_to_pc2_msg(dropped, frame_id='odom')
+    #    self.dropped_pub.publish(msg)
+
+    def publish_dropped_cloud(self, full_pc: torch.Tensor, keep_indices: torch.Tensor):         # CUDA usage
+        device = full_pc.device  # CUDA- oder CPU-Kontext übernehmen
+        mask = torch.ones(full_pc.shape[0], dtype=torch.bool, device=device)
+        mask[keep_indices] = False
         dropped = full_pc[mask].cpu().numpy()
         msg = self.convert_to_pc2_msg(dropped, frame_id='odom')
         self.dropped_pub.publish(msg)
-    
+
 
 def main(
     pcd_topic="/dliom/odom_node/compress",

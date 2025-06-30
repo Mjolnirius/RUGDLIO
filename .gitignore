@@ -5,6 +5,7 @@ __pycache__/
 
 #ignore datasets
 input_data/
+rosrecordings/
 
 # C extensions
 *.so
