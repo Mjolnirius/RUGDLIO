@@ -74,6 +74,12 @@ class KeypointNode(Node):
             qos_profile=1
         )
 
+        self.pc_pub = self.create_publisher(            # Publish Compressed Cloud
+            PointCloud2,
+            topic="/PointRec/compressed_cloud_dfliom",
+            qos_profile=1
+        )
+
         self.scan_cnt = 0
 
         y = yaml.YAML(typ='safe', pure=True)
@@ -230,6 +236,8 @@ class KeypointNode(Node):
         published_msg.data = all_indices.to(torch.int32).tolist()
         self.compressed_pub.publish(published_msg)
 
+        self.publish_compressed_cloud(point_cloud, all_indices)                 # Publish Compressed Cloud
+
         runtime = time.time() - start
         self.scan_cnt += 1
 
@@ -287,6 +295,11 @@ class KeypointNode(Node):
             msg.data = b''.join(buffer)
         
         return msg
+
+    def publish_compressed_cloud(self, full_pc: torch.Tensor, indices: torch.Tensor):               # Publish Compressed Cloud
+        selected = full_pc[indices].cpu().numpy()
+        msg = self.convert_to_pc2_msg(selected, frame_id='odom')
+        self.pc_pub.publish(msg)
     
 
 def main(
