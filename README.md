@@ -91,6 +91,20 @@ ros2 run FeatureLIOM extract
 ```
 The node listens to the specified `pcd_topic`, and publishes keypoint **indices** on `downsampled_topic`. This implementation assumes the odometry code maintains the point ordering until the dense point cloud gets compressed.
 
+Quickstart: Use the following shell script:
+
+```
+cd ~/dfliom_ws
+conda activate dfliom_env
+~/dfliom_ws/src/FeatureLIOM/scripts/start_featureliom.sh
+```
+```
+rviz2
+```
+```
+ros2 bag play ~/dfliom_ws/src/FeatureLIOM/input_data/dataset_quadhard_full/quadhard.db3  --loop   --rate 0.5
+```
+
 ## Generated Maps
 
 We present detailed maps of the Northeastern University Campus and Newer College Dataset in this section.

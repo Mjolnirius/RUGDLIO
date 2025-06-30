@@ -80,6 +80,12 @@ class KeypointNode(Node):
             qos_profile=1
         )
 
+        self.dropped_pub = self.create_publisher(       # Dropped Cloud
+            PointCloud2,
+            topic="/PointRec/dropped_cloud_dfliom",
+            qos_profile=1
+        )
+
         self.scan_cnt = 0
 
         y = yaml.YAML(typ='safe', pure=True)
@@ -237,6 +243,7 @@ class KeypointNode(Node):
         self.compressed_pub.publish(published_msg)
 
         self.publish_compressed_cloud(point_cloud, all_indices)                 # Publish Compressed Cloud
+        self.publish_dropped_cloud(point_cloud, all_indices)                    # Publish Dropped Cloud
 
         runtime = time.time() - start
         self.scan_cnt += 1
@@ -300,6 +307,14 @@ class KeypointNode(Node):
         selected = full_pc[indices].cpu().numpy()
         msg = self.convert_to_pc2_msg(selected, frame_id='odom')
         self.pc_pub.publish(msg)
+
+    def publish_dropped_cloud(self, full_pc: torch.Tensor, keep_indices: torch.Tensor):
+        all_indices = torch.arange(full_pc.shape[0])
+        mask = torch.ones(full_pc.shape[0], dtype=torch.bool)
+        mask[keep_indices.cpu()] = False
+        dropped = full_pc[mask].cpu().numpy()
+        msg = self.convert_to_pc2_msg(dropped, frame_id='odom')
+        self.dropped_pub.publish(msg)
     
 
 def main(
