@@ -26,7 +26,7 @@ This repository contains the official implementation of the feature extractor ne
 ## Running
 
 ### Setup Machine
-'''
+```
 mkdir -p ~/dfliom_ws/src
 cd ~/dfliom_ws/src
 
@@ -79,7 +79,7 @@ export PYTHONPATH=/home/thor_unix_2204/miniconda3/envs/dfliom_env/lib/python3.10
 export PYTHONPATH=$HOME/dfliom_ws/src/FeatureLIOM:$PYTHONPATH
 
 ros2 run FeatureLIOM extract --ros-args -r /dliom/odom_node/compress:=/os_cloud_node/points
-'''
+```
 
 ### Building
 Build the ROS package using `Colcon`:
