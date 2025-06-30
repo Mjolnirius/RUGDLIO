@@ -25,6 +25,62 @@ This repository contains the official implementation of the feature extractor ne
 
 ## Running
 
+### Setup Machine
+'''
+mkdir -p ~/dfliom_ws/src
+cd ~/dfliom_ws/src
+
+conda create -n dfliom_env python=3.10 -y
+conda activate dfliom_env
+
+sudo apt update && sudo apt upgrade -y
+sudo apt install software-properties-common curl gnupg lsb-release -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | \
+  sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+sudo apt update
+sudo apt install ros-humble-desktop -y
+
+conda deactivate 
+sudo apt install python3-rosdep -y
+
+sudo rosdep init
+rosdep update
+
+conda activate dfliom_env
+
+cd ~/dfliom_ws/src
+git clone https://github.com/neu-autonomy/FeatureLIOM.git #bzw. mein git
+
+cd ~/dfliom_ws/src/FeatureLIOM
+git submodule update --init --recursive
+
+cd submodules/octree_handler
+pip install -U .
+cd ../../
+
+pip uninstall ruamel.yaml -y
+pip install --no-cache-dir ruamel.yaml
+
+pip install torch==2.1.0+cu118 torchvision==0.16.0+cu118 torchaudio==2.1.0+cu118 --index-url https://download.pytorch.org/whl/cu118
+
+#install special wheels for cu118 (ToDo)
+
+pip install -r requirements.txt
+
+# .sh file ansonsten benutzen # --------------------------------------------
+cd ~/dfliom_ws
+source /opt/ros/humble/setup.bash
+colcon build --packages-select FeatureLIOM
+source install/setup.bash
+
+python -c "import site; print(site.getsitepackages()[0])"
+export PYTHONPATH=/home/thor_unix_2204/miniconda3/envs/dfliom_env/lib/python3.10/site-packages:$PYTHONPATH
+export PYTHONPATH=$HOME/dfliom_ws/src/FeatureLIOM:$PYTHONPATH
+
+ros2 run FeatureLIOM extract --ros-args -r /dliom/odom_node/compress:=/os_cloud_node/points
+'''
+
 ### Building
 Build the ROS package using `Colcon`:
 
