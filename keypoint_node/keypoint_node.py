@@ -45,10 +45,10 @@ class KeypointNode(Node):
     def __init__(self,
         pcd_topic="/dliom/odom_node/compress",
         downsampled_topic="/PointRec/descriptor_cloud",
-        use_model=False,
+        use_model=False,        # default, but gets changed in main further down
         cfg="src/FeatureLIOM/config/bimodal_NCL_Pretrained_Match.yaml",
         mode="bimodal",
-        lidar_range=50.0
+        lidar_range=50.0        # Does this override the parsed arg?
     ):
 
         super().__init__('KeypointNode')
@@ -116,8 +116,8 @@ class KeypointNode(Node):
         print("PointCloud empfangen. Nice!")
         point_cloud, rings = self.msg_to_torch_pcd(msg)
 
-        print("device point_cloud:", point_cloud.device)                        # CUDA check
-        print("device model:", next(self.bimodal_model.parameters()).device)    # CUDA check
+        #print("device point_cloud:", point_cloud.device)                        # CUDA check
+        #print("device model:", next(self.bimodal_model.parameters()).device)    # CUDA check
 
         if self.use_model:
 
@@ -210,12 +210,12 @@ class KeypointNode(Node):
                     if len(coverage_indices) >= 0.01 * point_cloud.shape[0]:
                         direct_kp_indices = torch.cat([direct_kp_indices, coverage_indices])
 
-                #mask = torch.ones(len(point_cloud), dtype=torch.bool)      # CUDA usage
+                #mask = torch.ones(len(point_cloud), dtype=torch.bool)      # CUDA usage: next line
                 mask = torch.ones(len(point_cloud), dtype=torch.bool, device=point_cloud.device)
 
                 mask[direct_kp_indices] = False
-                print("device mask:", mask.device)                          # CUDA check
-                print("device point_cloud (masking):", point_cloud.device)  # CUDA check
+                #print("device mask:", mask.device)                          # CUDA check
+                #print("device point_cloud (masking):", point_cloud.device)  # CUDA check
 
                 to_be_compressed = point_cloud[mask]
                 # to_be_compressed_score = score[mask]
@@ -226,7 +226,7 @@ class KeypointNode(Node):
         else:
 
             # randomly select 20% points from the dense point cloud
-            #all_indices = torch.arange(len(point_cloud)).cuda()        # CUDA usage
+            #all_indices = torch.arange(len(point_cloud)).cuda()        # CUDA usage: next line
             all_indices = torch.arange(len(point_cloud), device=point_cloud.device)
 
             direct_kp_indices = torch.randint(low=0, high=len(point_cloud), size=(int(0.2*len(point_cloud)),)).cuda()
@@ -253,10 +253,10 @@ class KeypointNode(Node):
         # until they gets compressed (receive indices from this node)
         published_msg = Int32MultiArray()
         published_msg.data = all_indices.to(torch.int32).tolist()
-        self.compressed_pub.publish(published_msg)
+        self.compressed_pub.publish(published_msg)                              # Publish Keypoint Indices
 
-        self.publish_compressed_cloud(point_cloud, all_indices)                 # Publish Compressed Cloud
-        self.publish_dropped_cloud(point_cloud, all_indices)                    # Publish Dropped Cloud
+        #self.publish_compressed_cloud(point_cloud, all_indices)                 # Publish Compressed Cloud
+        #self.publish_dropped_cloud(point_cloud, all_indices)                    # Publish Dropped Cloud
 
         runtime = time.time() - start
         self.scan_cnt += 1
@@ -341,7 +341,7 @@ class KeypointNode(Node):
 def main(
     pcd_topic="/dliom/odom_node/compress",
     downsampled_topic="/PointRec/descriptor_cloud",
-    use_model=True,
+    use_model=True,     # Overrides default
     bimodal_cfg="src/FeatureLIOM/config/bimodal_NCL_Pretrained_Match.yaml",
     mode="bimodal",
     lidar_range=128.0

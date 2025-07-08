@@ -15,7 +15,8 @@ setup(
     license = "MIT",
     entry_points = {
         'console_scripts': [
-            'extract = keypoint_node.keypoint_node:main',
+            'extract = keypoint_node.keypoint_node:main',           # Input/Output --> ROS subscriber/publisher
+            'extract_batch = keypoint_node.batch_runner:main'       # Input/Output --> Folders
         ],
     }
 )
