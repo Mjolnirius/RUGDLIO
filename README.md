@@ -104,6 +104,13 @@ rviz2
 ```
 ros2 bag play ~/dfliom_ws/src/FeatureLIOM/input_data/dataset_quadhard_full/quadhard.db3  --loop   --rate 0.5
 ```
+For the local (non-ROS) variant:
+```
+cd ~/dfliom_ws
+conda activate dfliom_env
+~/dfliom_ws/src/FeatureLIOM/scripts/run_featureliom_batch.sh
+```
+
 
 ## Generated Maps
 

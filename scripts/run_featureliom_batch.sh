@@ -18,4 +18,4 @@ python3 $HOME/dfliom_ws/src/FeatureLIOM/keypoint_node/batch_runner.py \
   --output_dir $HOME/dfliom_ws/src/FeatureLIOM/input_data/dataset_quadhard_full/DFLIOM_output_new_quadhard_seq_50_79 \
   --use_model \
   --mode bimodal \
-  --lidar_range 70.0
+  --lidar_range 70.0    # To be changed
