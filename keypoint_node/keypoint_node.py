@@ -255,8 +255,8 @@ class KeypointNode(Node):
         published_msg.data = all_indices.to(torch.int32).tolist()
         self.compressed_pub.publish(published_msg)                              # Publish Keypoint Indices
 
-        #self.publish_compressed_cloud(point_cloud, all_indices)                 # Publish Compressed Cloud
-        #self.publish_dropped_cloud(point_cloud, all_indices)                    # Publish Dropped Cloud
+        self.publish_compressed_cloud(point_cloud, all_indices)                 # Publish Compressed Cloud
+        self.publish_dropped_cloud(point_cloud, all_indices)                    # Publish Dropped Cloud
 
         runtime = time.time() - start
         self.scan_cnt += 1

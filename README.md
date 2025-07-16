@@ -100,6 +100,8 @@ conda activate dfliom_env
 ```
 ```
 rviz2
+# set frame id to: ToDo (odom, os_sensor, map) 
+# listen to /PointRec/dropped_cloud_dfliom & /PointRec/compressed_cloud_dfliom
 ```
 ```
 ros2 bag play ~/dfliom_ws/src/FeatureLIOM/input_data/dataset_quadhard_full/quadhard.db3  --loop   --rate 0.5
